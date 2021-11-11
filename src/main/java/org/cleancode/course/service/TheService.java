@@ -3,6 +3,7 @@ package org.cleancode.course.service;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Locale;
 
 public class TheService {
 
@@ -22,14 +23,14 @@ public class TheService {
         return theList;
     }
 
-    // METODO QUE DEVUELVE LOS POST DESTACADOS
+    //
     public List<String[]> getThem() {
         List<String[]> list1 = new ArrayList<String[]>();
-        for(String[] x: theList)
-            if(x[4] == "3")
-                list1.add(x);
+        for(String[] x: theList) // ¿Qué contiene theList?
+            if(x[4] == "3") // ¿Qué significado tiene el subindice 4 en un elemento de theList?
+                list1.add(x); // ¿Qué importancia tiene el valor 3?
 
-            return list1;
+            return list1; // ¿Cómo se usa la lista devuelta?
     }
 
     public List<String[]> duplicateOneAndReturnThemAll(int i) {
@@ -43,5 +44,33 @@ public class TheService {
         for (int i = 0; i < a1.length; i++) {
             a2[i] = a1[i];
         }
+    }
+
+    public String countPostLetters(char a, int i) {
+        String[] post = theList.get(i);
+        int n = 0;
+        for(int j = 0; j < post[2].toCharArray().length; j++) {
+            if(post[2].toLowerCase(Locale.ROOT).toCharArray()[j] == a) {
+                n++;
+            }
+        }
+        String number;
+        String verb;
+        String pluralModifier;
+        if (n == 0) {
+            number = "no";
+            verb = "are";
+            pluralModifier = "s";
+        } else if (n == 1) {
+            number = "1";
+            verb = "is";
+            pluralModifier = "";
+        } else {
+            number = Integer.toString(n);
+            verb = "are";
+            pluralModifier = "s";
+        }
+        String message = String.format("There %s %s %s%s", verb, number, a, pluralModifier);
+        return message;
     }
 }
