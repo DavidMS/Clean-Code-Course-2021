@@ -4,12 +4,14 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
+import java.util.stream.Collectors;
 
 public class TheService {
 
     private int d; // Elapsed time in days
 
     private List<String[]> theList = new ArrayList<>();
+    private List<String[]> theList2 = new ArrayList<>();
 
     public TheService() {
         this.theList.addAll(Arrays.asList(
@@ -17,6 +19,16 @@ public class TheService {
                 new String[]{"2", "Descubre con este cuestionario si sufres del síndrome 'me gusta mas la cama que ir a trabajar'", "Lorem ipsum...", "Pedro Ramírez", "2"},
                 new String[]{"3", "Cómo me hice rico escribiendo posts sobre cómo me hice rico", "Lorem ipsum...", "Juan", "3"},
                 new String[]{"4", "Esto es un borrador", "...", "Juan", "1"}));
+
+        this.theList2.addAll(Arrays.asList(
+                new String[]{"1", "1", "3", "Lorem ipsum..."},
+                new String[]{"2", "1", "3", "Lorem ipsum..."},
+                new String[]{"3", "1", "2", "Lorem ipsum..."},
+                new String[]{"4", "1", "1", "Lorem ipsum..."},
+                new String[]{"5", "2", "0", "Lorem ipsum..."},
+                new String[]{"6", "2", "2", "Lorem ipsum..."},
+                new String[]{"7", "3", "3", "Lorem ipsum..."},
+                new String[]{"8", "4", "1", "Lorem ipsum..."}));
     }
 
     public List<String[]> getThemAll() {
@@ -34,9 +46,9 @@ public class TheService {
     }
 
     public List<String[]> duplicateOneAndReturnThemAll(int i) {
-        String[] copy = new String[theList.get(i).length];
-        copyStrings(theList.get(--i), copy);
-        theList.add(copy);
+        String[] a = new String[theList.get(--i).length];
+        copyStrings(theList.get(--i), a);
+        theList.add(a);
         return theList;
     }
 
@@ -44,6 +56,33 @@ public class TheService {
         for (int i = 0; i < a1.length; i++) {
             a2[i] = a1[i];
         }
+    }
+
+    public List<String[]> getPRA(String i) {
+        List<String[]> pR = theList2
+                .stream()
+                .filter(r -> r[1].equals(i)).collect(Collectors.toList());
+        int a = 0;
+        int b = 0;
+        int c = 0;
+        int d = 0;
+        for(int j = 0; j < pR.size(); j++) {
+            switch(pR.get(j)[2]) {
+                case "0": a++;
+                break;
+                case "1": b++;
+                break;
+                case "2": c++;
+                break;
+                case "3": d++;
+                break;
+                default: a++;
+                break;
+            }
+        }
+        List<String[]> e = new ArrayList<>();
+        e.addAll(Arrays.asList(new String[]{"3 stars", "" + d},new String[]{"2 stars", "" + c},new String[]{"1 stars", "" + b},new String[]{"0 stars", "" + a}));
+        return e;
     }
 
     public String countPostLetters(char a, int i) {

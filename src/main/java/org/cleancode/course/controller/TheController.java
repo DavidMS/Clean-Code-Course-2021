@@ -31,4 +31,9 @@ public class TheController {
     public String countPostLetters(@PathVariable char letter, @PathVariable int i) {
         return theService.countPostLetters(letter, i);
     }
+
+    @GetMapping("/ratings-aggregate/{i}")
+    public List<String[]> getPRA(@PathVariable String i) {
+        return theService.getPRA(i);
+    }
 }
