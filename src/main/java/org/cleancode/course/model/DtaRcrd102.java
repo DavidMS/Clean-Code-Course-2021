@@ -12,4 +12,5 @@ public class DtaRcrd102 {
     private String m_rateString;
     private String m_titleString;
     private String m_contentString;
+    private String m_statusString;
 }
