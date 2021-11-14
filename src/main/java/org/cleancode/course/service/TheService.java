@@ -8,8 +8,6 @@ import java.util.stream.Collectors;
 
 public class TheService {
 
-    private int d; // Elapsed time in days
-
     private List<String[]> theList = new ArrayList<>();
     private List<String[]> theList2 = new ArrayList<>();
 
