@@ -24,7 +24,7 @@ public class TheController {
 
     @GetMapping("/duplicateOneAndReturnThemAll/{i}")
     public List<String[]> duplicateOneAndReturnThemAll(@PathVariable int i) {
-        return theService.duplicateOneAndReturnThemAll(i);
+        return theService.doSomething(i);
     }
 
     @GetMapping("/countPostLetters/{letter}/{i}")

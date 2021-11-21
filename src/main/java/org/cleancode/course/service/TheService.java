@@ -57,17 +57,17 @@ public class TheService {
             return list1; // ¿Cómo se usa la lista devuelta?
     }
 
-    public List<String[]> duplicateOneAndReturnThemAll(int i) {
-        String[] a = new String[theList.get(--i).length];
-        copyStrings(theList.get(--i), a);
+    public List<String[]> doSomething(int i) {
+        String[] a = new String[theList.get(0).length];
+        for(int j = 0; j < theList.size(); i++) {
+            if(theList.get(j)[0] == "" + i) {
+                for (int k = 0; k < a.length; k++) {
+                    a[k] = theList.get(j)[k];
+                }
+            }
+        }
         theList.add(a);
         return theList;
-    }
-
-    public void copyStrings(String a1[], String a2[]) {
-        for (int i = 0; i < a1.length; i++) {
-            a2[i] = a1[i];
-        }
     }
 
     public List<String[]> getPRA(String i) {
