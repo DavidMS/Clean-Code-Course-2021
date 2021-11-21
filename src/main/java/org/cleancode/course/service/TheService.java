@@ -8,16 +8,30 @@ import java.util.stream.Collectors;
 
 public class TheService {
 
+    // This list contains an array of post
     private List<String[]> theList = new ArrayList<>();
+    // This list contains an array of rating for posts
     private List<String[]> theList2 = new ArrayList<>();
 
     public TheService() {
+
+        // The array of String that forms a post:
+        // [0] id of the post
+        // [1] title of the post
+        // [2] contain of the post
+        // [3] author of the post
+        // [4] status of the post { 1: DRAFT, 2: PUBLISHED, 3: FEATURED}
         this.theList.addAll(Arrays.asList(
                 new String[]{"1", "7 estrategias para ganar a las chapas", "Lorem ipsum...", "Arturo González", "3"},
                 new String[]{"2", "Descubre con este cuestionario si sufres del síndrome 'me gusta mas la cama que ir a trabajar'", "Lorem ipsum...", "Pedro Ramírez", "2"},
                 new String[]{"3", "Cómo me hice rico escribiendo posts sobre cómo me hice rico", "Lorem ipsum...", "Juan", "3"},
                 new String[]{"4", "Esto es un borrador", "...", "Juan", "1"}));
 
+        // The array of String that forms a rate:
+        // [0] id of the rate
+        // [1] id of the post rated
+        // [2] rate number
+        // [3] comment if any
         this.theList2.addAll(Arrays.asList(
                 new String[]{"1", "1", "3", "Lorem ipsum..."},
                 new String[]{"2", "1", "3", "Lorem ipsum..."},
