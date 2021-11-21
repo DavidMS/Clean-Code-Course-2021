@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
-import java.util.stream.Collectors;
 
 public class TheService {
 
@@ -71,15 +70,18 @@ public class TheService {
     }
 
     public List<String[]> getPRA(String i) {
-        List<String[]> pR = theList2
-                .stream()
-                .filter(r -> r[1].equals(i)).collect(Collectors.toList());
+        List<String[]> pR = new ArrayList<>();
+        for(int j = 0; j < theList2.size(); j++) {
+            if (theList2.get(j)[1].equals(i)) {
+                pR.add(theList2.get(j));
+            }
+        }
         int a = 0;
         int b = 0;
         int c = 0;
         int d = 0;
-        for(int j = 0; j < pR.size(); j++) {
-            switch(pR.get(j)[2]) {
+        for(int k = 0; k < pR.size(); k++) {
+            switch(pR.get(k)[2]) {
                 case "0": a++;
                 break;
                 case "1": b++;
