@@ -1,5 +1,9 @@
 package org.cleancode.course.service;
 
+import org.cleancode.course.model.Image;
+import org.cleancode.course.model.Post;
+import org.cleancode.course.model.Rating;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -8,15 +12,15 @@ import java.util.stream.Collectors;
 
 public class TheService {
 
-    private List<String[]> theList = new ArrayList<>();
+    private List<Post> posts = new ArrayList<>();
     private List<String[]> theList2 = new ArrayList<>();
 
     public TheService() {
-        this.theList.addAll(Arrays.asList(
-                new String[]{"1", "7 estrategias para ganar a las chapas", "Lorem ipsum...", "Arturo González", "3"},
-                new String[]{"2", "Descubre con este cuestionario si sufres del síndrome 'me gusta mas la cama que ir a trabajar'", "Lorem ipsum...", "Pedro Ramírez", "2"},
-                new String[]{"3", "Cómo me hice rico escribiendo posts sobre cómo me hice rico", "Lorem ipsum...", "Juan", "3"},
-                new String[]{"4", "Esto es un borrador", "...", "Juan", "1"}));
+        this.posts.addAll(Arrays.asList(
+                new Post(1, "7 estrategias para ganar a las chapas", "Lorem ipsum...", "Arturo González", "3"),
+                new Post(2, "Descubre con este cuestionario si sufres del síndrome 'me gusta mas la cama que ir a trabajar'", "Lorem ipsum...", "Pedro Ramírez", "2"),
+                new Post(3, "Cómo me hice rico escribiendo posts sobre cómo me hice rico", "Lorem ipsum...", "Juan", "3"),
+                new Post(4, "Esto es un borrador", "...", "Juan", "1")));
 
         this.theList2.addAll(Arrays.asList(
                 new String[]{"1", "1", "3", "Lorem ipsum..."},
@@ -29,31 +33,17 @@ public class TheService {
                 new String[]{"8", "4", "1", "Lorem ipsum..."}));
     }
 
-    public List<String[]> getThemAll() {
-        return theList;
+    public List<Post> getPosts() {
+        return posts;
     }
 
-    //
-    public List<String[]> getThem() {
-        List<String[]> list1 = new ArrayList<String[]>();
-        for(String[] x: theList) // ¿Qué contiene theList?
-            if(x[4] == "3") // ¿Qué significado tiene el subindice 4 en un elemento de theList?
-                list1.add(x); // ¿Qué importancia tiene el valor 3?
+    public List<Post> getFeaturedPosts() {
+        List<Post> featuredPosts = new ArrayList<>();
+        for(Post post: posts)
+            if("3".equals(post.getStatus()))
+                featuredPosts.add(post);
 
-            return list1; // ¿Cómo se usa la lista devuelta?
-    }
-
-    public List<String[]> duplicateOneAndReturnThemAll(int i) {
-        String[] a = new String[theList.get(--i).length];
-        copyStrings(theList.get(--i), a);
-        theList.add(a);
-        return theList;
-    }
-
-    public void copyStrings(String a1[], String a2[]) {
-        for (int i = 0; i < a1.length; i++) {
-            a2[i] = a1[i];
-        }
+            return featuredPosts;
     }
 
     public List<String[]> getPRA(String i) {
@@ -84,10 +74,10 @@ public class TheService {
     }
 
     public String countPostLetters(char a, int i) {
-        String[] post = theList.get(i);
+        Post post = posts.get(i);
         int n = 0;
-        for(int j = 0; j < post[2].toCharArray().length; j++) {
-            if(post[2].toLowerCase(Locale.ROOT).toCharArray()[j] == a) {
+        for(int j = 0; j < post.getContent().toCharArray().length; j++) {
+            if(post.getContent().toLowerCase(Locale.ROOT).toCharArray()[j] == a) {
                 n++;
             }
         }
@@ -109,5 +99,40 @@ public class TheService {
         }
         String message = String.format("There %s %s %s%s", verb, number, a, pluralModifier);
         return message;
+    }
+
+
+    public static String getPostInfo(Post post, boolean includeImages) {
+        StringBuffer buffer = new StringBuffer();
+        buffer.append(post.getTitle() + "\n");
+        if("FEATURED".equals(post.getStatus())) {
+            if(includeImages) {
+                List<Image> images = post.getImages();
+                if(!images.isEmpty()) {
+                    images.stream().forEach(image -> buffer.append(image.getUrl() + "\n"));
+                }
+            }
+            List<String> content = post.getTags();
+            if(!content.isEmpty()) {
+                content.stream().forEach(c -> buffer.append(c + "\n"));
+            }
+        }
+        buffer.append(post.getContent());
+        if("FEATURED".equals(post.getStatus())) {
+            List<Rating> ratings = post.getRatings();
+            if(!ratings.isEmpty()) {
+                ratings.stream().forEach(rating -> {
+                    buffer.append(rating.getRate());
+                    if(includeImages) {
+                        List<Image> images = rating.getImages();
+                        if(!images.isEmpty()) {
+                            images.stream().forEach(image -> buffer.append(image.getUrl()));
+                        }
+                    }
+                });
+            }
+        }
+        post.setInfo(buffer.toString());
+        return post.getInfo();
     }
 }
