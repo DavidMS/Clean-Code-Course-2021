@@ -2,6 +2,7 @@ package org.cleancode.course.service;
 
 import org.cleancode.course.model.Image;
 import org.cleancode.course.model.Post;
+import org.cleancode.course.model.PostStatus;
 import org.cleancode.course.model.Rating;
 
 import java.util.ArrayList;
