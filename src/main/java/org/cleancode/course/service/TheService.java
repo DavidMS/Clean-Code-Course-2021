@@ -4,13 +4,15 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
+import java.util.stream.Collectors;
 
 public class TheService {
 
-    // This list contains an array of post
-    private List<String[]> theList = new ArrayList<>();
-    // This list contains an array of rating for posts
-    private List<String[]> theList2 = new ArrayList<>();
+    public static final int POST_STATUS_POSITION = 4;
+    public static final String FEATURED_STATUS_VALUE = "3";
+    public static final int POST_ID_POSITION = 0;
+    private List<String[]> posts = new ArrayList<>();
+    private List<String[]> ratings = new ArrayList<>();
 
     public TheService() {
 
@@ -19,8 +21,8 @@ public class TheService {
         // [1] title of the post
         // [2] contain of the post
         // [3] author of the post
-        // [4] status of the post { 1: DRAFT, 2: PUBLISHED, 3: FEATURED}
-        this.theList.addAll(Arrays.asList(
+        // [4] status of the post { 1: DRAFT, 2: PUBLISHED, 3: FEATURED }
+        this.posts.addAll(Arrays.asList(
                 new String[]{"1", "7 estrategias para ganar a las chapas", "Lorem ipsum...", "Arturo González", "3"},
                 new String[]{"2", "Descubre con este cuestionario si sufres del síndrome 'me gusta mas la cama que ir a trabajar'", "Lorem ipsum...", "Pedro Ramírez", "2"},
                 new String[]{"3", "Cómo me hice rico escribiendo posts sobre cómo me hice rico", "Lorem ipsum...", "Juan", "3"},
@@ -31,7 +33,7 @@ public class TheService {
         // [1] id of the post rated
         // [2] rate number
         // [3] comment if any
-        this.theList2.addAll(Arrays.asList(
+        this.ratings.addAll(Arrays.asList(
                 new String[]{"1", "1", "3", "Lorem ipsum..."},
                 new String[]{"2", "1", "3", "Lorem ipsum..."},
                 new String[]{"3", "1", "2", "Lorem ipsum..."},
@@ -42,65 +44,73 @@ public class TheService {
                 new String[]{"8", "4", "1", "Lorem ipsum..."}));
     }
 
-    public List<String[]> getThemAll() {
-        return theList;
+    public List<String[]> getPosts() {
+        return posts;
     }
 
-    //
-    public List<String[]> getThem() {
-        List<String[]> list1 = new ArrayList<String[]>();
-        for(String[] x: theList) // ¿Qué contiene theList?
-            if(x[4] == "3") // ¿Qué significado tiene el subindice 4 en un elemento de theList?
-                list1.add(x); // ¿Qué importancia tiene el valor 3?
-
-            return list1; // ¿Cómo se usa la lista devuelta?
-    }
-
-    public List<String[]> doSomething(int i) {
-        String[] a = new String[theList.get(0).length];
-        for(int j = 0; j < theList.size(); i++) {
-            if(theList.get(j)[0] == "" + i) {
-                for (int k = 0; k < a.length; k++) {
-                    a[k] = theList.get(j)[k];
-                }
+    public List<String[]> getFeaturedPosts() {
+        List<String[]> featuredPosts = new ArrayList<>();
+        for(String[] post: posts) {
+            if (FEATURED_STATUS_VALUE.equals(post[POST_STATUS_POSITION])) {
+                featuredPosts.add(post);
             }
         }
-        theList.add(a);
-        return theList;
+        return featuredPosts;
     }
 
-    public List<String[]> getPRA(String i) {
-        List<String[]> pR = new ArrayList<>();
-        for(int j = 0; j < theList2.size(); j++) {
-            if (theList2.get(j)[1].equals(i)) {
-                pR.add(theList2.get(j));
-            }
+    public List<String[]> copyPostAddItAndReturnIt(int postId) {
+        String[] newPost = new String[posts.get(0).length];
+        var postToCopy = findPostById(postId);
+        copyPostsContent(newPost, postToCopy);
+        posts.add(newPost);
+        return posts;
+    }
+
+    private String[] findPostById(int postId) {
+        return posts
+                .stream()
+                .filter(post -> post[POST_ID_POSITION] == "" + postId)
+                .findFirst()
+                .get();
+    }
+
+    private void copyPostsContent(String[] newPost, String[] postToCopy) {
+        for (int i = 0; i < newPost.length - 1; i++) {
+            newPost[i] = postToCopy[i];
         }
-        int a = 0;
-        int b = 0;
-        int c = 0;
-        int d = 0;
-        for(int k = 0; k < pR.size(); k++) {
-            switch(pR.get(k)[2]) {
-                case "0": a++;
+    }
+
+    public List<String[]> getPostRatingsAggregate(String postId) {
+        List<String[]> postRatings = ratings
+                .stream()
+                .filter(rating -> postId.equals(rating[1]))
+                .collect(Collectors.toList());
+
+        int zeroStars = 0;
+        int oneStar = 0;
+        int twoStars = 0;
+        int threeStars = 0;
+        for(int k = 0; k < postRatings.size(); k++) {
+            switch(postRatings.get(k)[2]) {
+                case "0": zeroStars++;
                 break;
-                case "1": b++;
+                case "1": oneStar++;
                 break;
-                case "2": c++;
+                case "2": twoStars++;
                 break;
-                case "3": d++;
+                case "3": threeStars++;
                 break;
-                default: a++;
+                default: zeroStars++;
                 break;
             }
         }
         List<String[]> e = new ArrayList<>();
-        e.addAll(Arrays.asList(new String[]{"3 stars", "" + d},new String[]{"2 stars", "" + c},new String[]{"1 stars", "" + b},new String[]{"0 stars", "" + a}));
+        e.addAll(Arrays.asList(new String[]{"3 stars", "" + threeStars},new String[]{"2 stars", "" + twoStars},new String[]{"1 stars", "" + oneStar},new String[]{"0 stars", "" + zeroStars}));
         return e;
     }
 
     public String countPostLetters(char a, int i) {
-        String[] post = theList.get(i);
+        String[] post = posts.get(i);
         int n = 0;
         for(int j = 0; j < post[2].toCharArray().length; j++) {
             if(post[2].toLowerCase(Locale.ROOT).toCharArray()[j] == a) {
