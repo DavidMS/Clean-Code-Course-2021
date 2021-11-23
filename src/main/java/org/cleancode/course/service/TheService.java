@@ -47,7 +47,7 @@ public class TheService {
             return featuredPosts;
     }
 
-    public List<String[]> getPRA(int i) {
+    public List<String[]> getPostRatingsAggregate(int i) {
         List<Rating> postRatings = ratings
                 .stream()
                 .filter(rating -> rating.getPostId() == i)
