@@ -14,24 +14,24 @@ import java.util.stream.Collectors;
 public class TheService {
 
     private List<Post> posts = new ArrayList<>();
-    private List<String[]> theList2 = new ArrayList<>();
+    private List<Rating> ratings = new ArrayList<>();
 
     public TheService() {
         this.posts.addAll(Arrays.asList(
-                new Post(1, "7 estrategias para ganar a las chapas", "Lorem ipsum...", "Arturo González", "3"),
-                new Post(2, "Descubre con este cuestionario si sufres del síndrome 'me gusta mas la cama que ir a trabajar'", "Lorem ipsum...", "Pedro Ramírez", "2"),
-                new Post(3, "Cómo me hice rico escribiendo posts sobre cómo me hice rico", "Lorem ipsum...", "Juan", "3"),
-                new Post(4, "Esto es un borrador", "...", "Juan", "1")));
+                new Post(1, "7 estrategias para ganar a las chapas", "Lorem ipsum...", "Arturo González", PostStatus.FEATURED),
+                new Post(2, "Descubre con este cuestionario si sufres del síndrome 'me gusta mas la cama que ir a trabajar'", "Lorem ipsum...", "Pedro Ramírez", PostStatus.PUBLISHED),
+                new Post(3, "Cómo me hice rico escribiendo posts sobre cómo me hice rico", "Lorem ipsum...", "Juan", PostStatus.FEATURED),
+                new Post(4, "Esto es un borrador", "...", "Juan", PostStatus.DRAFT)));
 
-        this.theList2.addAll(Arrays.asList(
-                new String[]{"1", "1", "3", "Lorem ipsum..."},
-                new String[]{"2", "1", "3", "Lorem ipsum..."},
-                new String[]{"3", "1", "2", "Lorem ipsum..."},
-                new String[]{"4", "1", "1", "Lorem ipsum..."},
-                new String[]{"5", "2", "0", "Lorem ipsum..."},
-                new String[]{"6", "2", "2", "Lorem ipsum..."},
-                new String[]{"7", "3", "3", "Lorem ipsum..."},
-                new String[]{"8", "4", "1", "Lorem ipsum..."}));
+        this.ratings.addAll(Arrays.asList(
+                new Rating(1, 3, "Lorem ipsum...", 1),
+                new Rating(2, 3, "Lorem ipsum...", 1),
+                new Rating(3, 1, "Lorem ipsum...", 2),
+                new Rating(4, 1, "Lorem ipsum...", 1),
+                new Rating(5, 0, "Lorem ipsum...", 2),
+                new Rating(6, 2, "Lorem ipsum...", 2),
+                new Rating(7, 3, "Lorem ipsum...", 3),
+                new Rating(8, 4, "Lorem ipsum...", 4)));
     }
 
     public List<Post> getPosts() {
@@ -41,65 +41,37 @@ public class TheService {
     public List<Post> getFeaturedPosts() {
         List<Post> featuredPosts = new ArrayList<>();
         for(Post post: posts)
-            if("3".equals(post.getStatus()))
+            if(post.isFeatured())
                 featuredPosts.add(post);
 
             return featuredPosts;
     }
 
-    public List<String[]> getPRA(String i) {
-        List<String[]> pR = theList2
+    public List<String[]> getPRA(int i) {
+        List<Rating> postRatings = ratings
                 .stream()
-                .filter(r -> r[1].equals(i)).collect(Collectors.toList());
-        int a = 0;
-        int b = 0;
-        int c = 0;
-        int d = 0;
-        for(int j = 0; j < pR.size(); j++) {
-            switch(pR.get(j)[2]) {
-                case "0": a++;
-                break;
-                case "1": b++;
-                break;
-                case "2": c++;
-                break;
-                case "3": d++;
-                break;
-                default: a++;
-                break;
-            }
-        }
+                .filter(rating -> rating.getPostId() == i)
+                .collect(Collectors.toList());
+        long zeroStarsRates = postRatings.stream().filter(rating -> rating.getRate() == 0).count();
+        long oneStarsRates = postRatings.stream().filter(rating -> rating.getRate() == 1).count();
+        long twoStarsRates = postRatings.stream().filter(rating -> rating.getRate() == 2).count();
+        long threeStarsRates = postRatings.stream().filter(rating -> rating.getRate() == 3).count();
+
         List<String[]> e = new ArrayList<>();
-        e.addAll(Arrays.asList(new String[]{"3 stars", "" + d},new String[]{"2 stars", "" + c},new String[]{"1 stars", "" + b},new String[]{"0 stars", "" + a}));
+        e.addAll(Arrays.asList(new String[]{"3 stars", "" + threeStarsRates},new String[]{"2 stars", "" + twoStarsRates},new String[]{"1 stars", "" + oneStarsRates},new String[]{"0 stars", "" + zeroStarsRates}));
         return e;
     }
 
-    public String countPostLetters(char a, int i) {
-        Post post = posts.get(i);
-        int n = 0;
+    public String countPostLetters(char candidate, int postId) {
+        Post post = posts.get(postId);
+        var postLettersMessage = new PostLettersMessage();
+        int count = 0;
         for(int j = 0; j < post.getContent().toCharArray().length; j++) {
-            if(post.getContent().toLowerCase(Locale.ROOT).toCharArray()[j] == a) {
-                n++;
+            if(post.getContent().toLowerCase(Locale.ROOT).toCharArray()[j] == candidate) {
+                count++;
             }
         }
-        String number;
-        String verb;
-        String pluralModifier;
-        if (n == 0) {
-            number = "no";
-            verb = "are";
-            pluralModifier = "s";
-        } else if (n == 1) {
-            number = "1";
-            verb = "is";
-            pluralModifier = "";
-        } else {
-            number = Integer.toString(n);
-            verb = "are";
-            pluralModifier = "s";
-        }
-        String message = String.format("There %s %s %s%s", verb, number, a, pluralModifier);
-        return message;
+        return postLettersMessage.make(candidate, count);
     }
 
 
@@ -135,5 +107,35 @@ public class TheService {
         }
         post.setInfo(buffer.toString());
         return post.getInfo();
+    }
+
+    public String printPostPreview(Post post) {
+        String message = "";
+        switch(post.getStatus()) {
+            case FEATURED: message = printFeaturedPost();
+            break;
+            case DRAFT: message = printDraftPost();
+            break;
+            case PUBLISHED: message = printPublishedPost();
+            break;
+            default: message = printDefaultPost();
+        }
+        return message;
+    }
+
+    public String printFeaturedPost() {
+        return "I am a featured post";
+    }
+
+    public String printDraftPost() {
+        return "I am a draft post";
+    }
+
+    public String printPublishedPost() {
+        return "I am a published post";
+    }
+
+    public String printDefaultPost() {
+        return "I am a default post";
     }
 }

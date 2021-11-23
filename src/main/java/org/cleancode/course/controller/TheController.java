@@ -29,7 +29,7 @@ public class TheController {
     }
 
     @GetMapping("/ratings-aggregate/{i}")
-    public List<String[]> getPRA(@PathVariable String i) {
+    public List<String[]> getPRA(@PathVariable int i) {
         return theService.getPRA(i);
     }
 }
