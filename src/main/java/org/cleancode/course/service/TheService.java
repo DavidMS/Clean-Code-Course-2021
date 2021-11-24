@@ -68,7 +68,7 @@ public class TheService {
     }
 
     public String countPostLetters(char candidate, int postId) {
-        Post post = posts.get(postId);
+        Post post = posts.stream().filter(p -> p.getId() == postId).findFirst().get();
         var postLettersMessage = new PostLettersMessage();
         int count = 0;
         for(int j = 0; j < post.getContent().toCharArray().length; j++) {
@@ -80,8 +80,9 @@ public class TheService {
     }
 
 
-    public static String getPostInfo(Post post, boolean includeImages) {
+    public String getPostInfo(int postId, boolean includeImages) {
         StringBuffer buffer = new StringBuffer();
+        Post post = posts.stream().filter(p -> p.getId() == postId).findFirst().get();
         if(post.isFeatured()) {
             buffer.append(post.getTitle() + "\n");
             if(includeImages) {
@@ -114,8 +115,9 @@ public class TheService {
         return post.getInfo();
     }
 
-    public String printPostPreview(Post post) {
+    public String printPostPreview(int postId) {
         String message = "";
+        Post post = posts.stream().filter(p -> p.getId() == postId).findFirst().get();
         switch(post.getStatus()) {
             case FEATURED: message = printFeaturedPost();
             break;
