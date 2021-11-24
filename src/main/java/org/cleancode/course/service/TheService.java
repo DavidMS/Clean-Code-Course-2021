@@ -13,6 +13,15 @@ import java.util.stream.Collectors;
 
 public class TheService {
 
+    // 1. Modificar el nombre del servicio
+    // 2. Modificar el nombre del controlador
+    // 3. Utilizar interfaces
+    // 4. Crear endpoint para utilizar printPostPreview
+    // 5. Refactorizar countPostLetters
+    // 6. Refactorizar printPostPreview
+    // 7. Refactorizar Login Service
+    // 8. Eliminar duplicados del servicio
+
     private List<Post> posts = new ArrayList<>();
     private List<Rating> ratings = new ArrayList<>();
 
