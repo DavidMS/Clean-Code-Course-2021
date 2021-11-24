@@ -23,13 +23,13 @@ public class TheController {
         return theService.getFeaturedPosts();
     }
 
-    @GetMapping("/countPostLetters/{letter}/{i}")
-    public String countPostLetters(@PathVariable char letter, @PathVariable int i) {
-        return theService.countPostLetters(letter, i);
-    }
-
     @GetMapping("/ratings-aggregate/{i}")
     public List<String[]> getPRA(@PathVariable int i) {
         return theService.getPostRatingsAggregate(i);
+    }
+
+    @GetMapping("/countPostLetters/{letter}/{i}")
+    public String countPostLetters(@PathVariable char letter, @PathVariable int i) {
+        return theService.countPostLetters(letter, i);
     }
 }

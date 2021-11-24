@@ -67,6 +67,34 @@ public class TheService {
                 .count();
     }
 
+    public String countPostLetters(char a, int i) {
+        Post post = posts.stream().filter(p -> p.getId() == i).findFirst().get();
+        int n = 0;
+        for(int j = 0; j < post.getContent().toCharArray().length; j++) {
+            if(post.getContent().toLowerCase(Locale.ROOT).toCharArray()[j] == a) {
+                n++;
+            }
+        }
+        String number;
+        String verb;
+        String pluralModifier;
+        if (n == 0) {
+            number = "no";
+            verb = "are";
+            pluralModifier = "s";
+        } else if (n == 1) {
+            number = "1";
+            verb = "is";
+            pluralModifier = "";
+        } else {
+            number = Integer.toString(n);
+            verb = "are";
+            pluralModifier = "s";
+        }
+        String message = String.format("There %s %s %s%s", verb, number, a, pluralModifier);
+        return message;
+    }
+
 
     public String getPostInfo(int postId, boolean includeImages) {
         StringBuffer buffer = new StringBuffer();
