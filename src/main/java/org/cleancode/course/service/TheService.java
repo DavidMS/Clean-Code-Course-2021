@@ -67,18 +67,6 @@ public class TheService {
                 .count();
     }
 
-    public String countPostLetters(char candidate, int postId) {
-        Post post = posts.stream().filter(p -> p.getId() == postId).findFirst().get();
-        var postLettersMessage = new PostLettersMessage();
-        int count = 0;
-        for(int j = 0; j < post.getContent().toCharArray().length; j++) {
-            if(post.getContent().toLowerCase(Locale.ROOT).toCharArray()[j] == candidate) {
-                count++;
-            }
-        }
-        return postLettersMessage.make(candidate, count);
-    }
-
 
     public String getPostInfo(int postId, boolean includeImages) {
         StringBuffer buffer = new StringBuffer();
