@@ -39,27 +39,32 @@ public class TheService {
     }
 
     public List<Post> getFeaturedPosts() {
-        List<Post> featuredPosts = new ArrayList<>();
-        for(Post post: posts)
-            if(post.isFeatured())
-                featuredPosts.add(post);
-
-            return featuredPosts;
+        return posts
+                .stream()
+                .filter(post -> post.isFeatured())
+                .collect(Collectors.toList());
     }
 
-    public List<String[]> getPostRatingsAggregate(int i) {
+    public List<String[]> getPostRatingsAggregate(int postId) {
         List<Rating> postRatings = ratings
                 .stream()
-                .filter(rating -> rating.getPostId() == i)
+                .filter(rating -> rating.getPostId() == postId)
                 .collect(Collectors.toList());
-        long zeroStarsRates = postRatings.stream().filter(rating -> rating.getRate() == 0).count();
-        long oneStarsRates = postRatings.stream().filter(rating -> rating.getRate() == 1).count();
-        long twoStarsRates = postRatings.stream().filter(rating -> rating.getRate() == 2).count();
-        long threeStarsRates = postRatings.stream().filter(rating -> rating.getRate() == 3).count();
+        long zeroStarsRates = getRatingValue(postRatings, 0);
+        long oneStarsRates = getRatingValue(postRatings, 1);
+        long twoStarsRates = getRatingValue(postRatings, 2);
+        long threeStarsRates = getRatingValue(postRatings, 3);
 
         List<String[]> e = new ArrayList<>();
         e.addAll(Arrays.asList(new String[]{"3 stars", "" + threeStarsRates},new String[]{"2 stars", "" + twoStarsRates},new String[]{"1 stars", "" + oneStarsRates},new String[]{"0 stars", "" + zeroStarsRates}));
         return e;
+    }
+
+    private long getRatingValue(List<Rating> postRatings, int i) {
+        return postRatings
+                .stream()
+                .filter(rating -> rating.getRate() == i)
+                .count();
     }
 
     public String countPostLetters(char candidate, int postId) {
@@ -77,8 +82,8 @@ public class TheService {
 
     public static String getPostInfo(Post post, boolean includeImages) {
         StringBuffer buffer = new StringBuffer();
-        buffer.append(post.getTitle() + "\n");
-        if("FEATURED".equals(post.getStatus())) {
+        if(post.isFeatured()) {
+            buffer.append(post.getTitle() + "\n");
             if(includeImages) {
                 List<Image> images = post.getImages();
                 if(!images.isEmpty()) {
@@ -89,8 +94,8 @@ public class TheService {
             if(!content.isEmpty()) {
                 content.stream().forEach(c -> buffer.append(c + "\n"));
             }
+            buffer.append(post.getContent());
         }
-        buffer.append(post.getContent());
         if("FEATURED".equals(post.getStatus())) {
             List<Rating> ratings = post.getRatings();
             if(!ratings.isEmpty()) {
