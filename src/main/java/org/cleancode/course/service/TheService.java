@@ -1,9 +1,11 @@
 package org.cleancode.course.service;
 
+import lombok.AllArgsConstructor;
 import org.cleancode.course.model.Image;
 import org.cleancode.course.model.Post;
 import org.cleancode.course.model.PostStatus;
 import org.cleancode.course.model.Rating;
+import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -11,6 +13,8 @@ import java.util.List;
 import java.util.Locale;
 import java.util.stream.Collectors;
 
+@Service
+@AllArgsConstructor
 public class TheService {
 
     // 1. Modificar el nombre del servicio
@@ -24,6 +28,8 @@ public class TheService {
 
     private List<Post> posts = new ArrayList<>();
     private List<Rating> ratings = new ArrayList<>();
+    private PostWrapperFactory postWrapperFactory;
+    private GenerateCountMessage generateCountMessage;
 
     public TheService() {
         this.posts.addAll(Arrays.asList(
@@ -76,38 +82,27 @@ public class TheService {
                 .count();
     }
 
-    public String countPostLetters(char a, int i) {
-        Post post = posts.stream().filter(p -> p.getId() == i).findFirst().get();
-        int n = 0;
-        for(int j = 0; j < post.getContent().toCharArray().length; j++) {
-            if(post.getContent().toLowerCase(Locale.ROOT).toCharArray()[j] == a) {
-                n++;
+    public String countPostLetters(char candidate, int postId) {
+        Post post = getPostById(postId);
+        int numberOfOccurrences = getNumberOfLettersInPostContent(candidate, post);
+        return generateCountMessage.makeMessage(numberOfOccurrences, candidate);
+    }
+
+    private int getNumberOfLettersInPostContent(char candidate, Post post) {
+        int numberOfOccurrences = 0;
+        var contentPostArray = post.getContent().toLowerCase(Locale.ROOT).toCharArray();
+        for(int j = 0; j < contentPostArray.length; j++) {
+            if(contentPostArray[j] == candidate) {
+                numberOfOccurrences++;
             }
         }
-        String number;
-        String verb;
-        String pluralModifier;
-        if (n == 0) {
-            number = "no";
-            verb = "are";
-            pluralModifier = "s";
-        } else if (n == 1) {
-            number = "1";
-            verb = "is";
-            pluralModifier = "";
-        } else {
-            number = Integer.toString(n);
-            verb = "are";
-            pluralModifier = "s";
-        }
-        String message = String.format("There %s %s %s%s", verb, number, a, pluralModifier);
-        return message;
+        return numberOfOccurrences;
     }
 
 
     public String getPostInfo(int postId, boolean includeImages) {
         StringBuffer buffer = new StringBuffer();
-        Post post = posts.stream().filter(p -> p.getId() == postId).findFirst().get();
+        Post post = getPostById(postId);
         if(post.isFeatured()) {
             buffer.append(post.getTitle() + "\n");
             if(includeImages) {
@@ -141,33 +136,11 @@ public class TheService {
     }
 
     public String printPostPreview(int postId) {
-        String message = "";
-        Post post = posts.stream().filter(p -> p.getId() == postId).findFirst().get();
-        switch(post.getStatus()) {
-            case FEATURED: message = printFeaturedPost();
-            break;
-            case DRAFT: message = printDraftPost();
-            break;
-            case PUBLISHED: message = printPublishedPost();
-            break;
-            default: message = printDefaultPost();
-        }
-        return message;
+        Post post = getPostById(postId);
+        return postWrapperFactory.makePostWrapper(post).print();
     }
 
-    public String printFeaturedPost() {
-        return "I am a featured post";
-    }
-
-    public String printDraftPost() {
-        return "I am a draft post";
-    }
-
-    public String printPublishedPost() {
-        return "I am a published post";
-    }
-
-    public String printDefaultPost() {
-        return "I am a default post";
+    private Post getPostById(int postId) {
+        return posts.stream().filter(p -> p.getId() == postId).findFirst().get();
     }
 }
