@@ -1,16 +1,17 @@
 package org.cleancode.course.service;
 
+import org.cleancode.course.exceptions.LoginException;
 import org.cleancode.course.model.ErrorCode;
 import org.springframework.stereotype.Service;
 
 @Service
 public class LoginService {
 
-    public String login(String name, String password) {
+    public String login(String name, String password) throws LoginException {
         if(!name.equals("juan")) {
-            return ErrorCode.INVALID_NAME.name();
+            throw new LoginException("Invalid username");
         } else if (!password.equals("1234")) {
-            return ErrorCode.INVALID_PASSWORD.name();
+            throw new LoginException("Invalid password");
         }
         else return "successful login!";
     }
