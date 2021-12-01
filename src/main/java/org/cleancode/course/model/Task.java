@@ -1,4 +1,4 @@
-package org.cleancode.course.tasks;
+package org.cleancode.course.model;
 
 public final class Task {
     private final long id;

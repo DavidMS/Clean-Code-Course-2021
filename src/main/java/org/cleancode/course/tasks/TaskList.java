@@ -1,10 +1,14 @@
 package org.cleancode.course.tasks;
 
+import org.cleancode.course.commands.CommandFactory;
+import org.cleancode.course.commands.CommandLine;
 import org.cleancode.course.io.Keyboard;
 import org.cleancode.course.io.Screen;
+import org.cleancode.course.model.Project;
+import org.cleancode.course.model.ProjectList;
+import org.cleancode.course.model.Task;
 
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -14,6 +18,7 @@ public final class TaskList implements Runnable {
     private static final String QUIT = "quit";
 
     private final Map<String, List<Task>> tasks = new LinkedHashMap<>();
+    private ProjectList projectList = new ProjectList();
     private final Keyboard keyboard;
     private final Screen screen;
 
@@ -46,21 +51,24 @@ public final class TaskList implements Runnable {
         }
     }
 
-    private void execute(String commandLine) {
-        String[] commandRest = commandLine.split(" ", 2);
-        String command = commandRest[0];
+    private void execute(String commandLineString) {
+        CommandLine commandLine = new CommandLine(commandLineString);
+        String command = commandLine.extractCommand();
+        CommandFactory commandFactory = new CommandFactory();
         switch (command) {
             case "show":
-                show();
+                commandFactory
+                        .make(command, commandLine.getRestOfParameters(), projectList, screen)
+                        .execute();
                 break;
             case "add":
-                add(commandRest[1]);
+                add(commandLine.getRestOfParameters());
                 break;
             case "check":
-                check(commandRest[1]);
+                check(commandLine.getRestOfParameters());
                 break;
             case "uncheck":
-                uncheck(commandRest[1]);
+                uncheck(commandLine.getRestOfParameters());
                 break;
             case "help":
                 help();
@@ -68,16 +76,6 @@ public final class TaskList implements Runnable {
             default:
                 error(command);
                 break;
-        }
-    }
-
-    private void show() {
-        for (Map.Entry<String, List<Task>> project : tasks.entrySet()) {
-            screen.printLine(project.getKey());
-            for (Task task : project.getValue()) {
-                screen.printFormat("    [%c] %d: %s%n", (task.isDone() ? 'x' : ' '), task.getId(), task.getDescription());
-            }
-            screen.printLine();
         }
     }
 
@@ -93,17 +91,20 @@ public final class TaskList implements Runnable {
     }
 
     private void addProject(String name) {
-        tasks.put(name, new ArrayList<Task>());
+        var project = new Project();
+        project.setName(name);
+        projectList.getProjects().add(project);
     }
 
-    private void addTask(String project, String description) {
-        List<Task> projectTasks = tasks.get(project);
-        if (projectTasks == null) {
-            screen.printFormat("Could not find a project with the name \"%s\".", project);
+    private void addTask(String projectName, String description) {
+        List<Task> projectTasks = tasks.get(projectName);
+        var project = projectList.findProjectByName(projectName);
+        if (project == null) {
+            screen.printFormat("Could not find a project with the name \"%s\".", projectName);
             screen.printLine();
             return;
         }
-        projectTasks.add(new Task(nextId(), description, false));
+        project.getTasks().add(new Task(nextId(), description, false));
     }
 
     private void check(String idString) {
@@ -116,8 +117,8 @@ public final class TaskList implements Runnable {
 
     private void setDone(String idString, boolean done) {
         int id = Integer.parseInt(idString);
-        for (Map.Entry<String, List<Task>> project : tasks.entrySet()) {
-            for (Task task : project.getValue()) {
+        for (Project project : projectList.getProjects()) {
+            for (Task task : project.getTasks().getTasks()) {
                 if (task.getId() == id) {
                     task.setDone(done);
                     return;
@@ -136,6 +137,7 @@ public final class TaskList implements Runnable {
         screen.printLine("  check <task ID>");
         screen.printLine("  uncheck <task ID>");
         screen.printLine();
+
     }
 
     private void error(String command) {

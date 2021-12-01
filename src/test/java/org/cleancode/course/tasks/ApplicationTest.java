@@ -29,8 +29,8 @@ public final class ApplicationTest {
     private Thread applicationThread;
 
     public ApplicationTest() throws IOException {
-        Keyboard keyboard = new Keyboard(new InputStreamReader(inStream));
-        Screen screen = new Screen(inWriter);
+        Keyboard keyboard = new Keyboard(new InputStreamReader(new PipedInputStream(inStream)));
+        Screen screen = new Screen(new PrintWriter(new PipedOutputStream(outStream)));
         TaskList taskList = new TaskList(keyboard, screen);
         applicationThread = new Thread(taskList);
     }
