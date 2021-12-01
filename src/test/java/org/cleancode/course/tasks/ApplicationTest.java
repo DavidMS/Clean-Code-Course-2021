@@ -1,6 +1,7 @@
-package org.cleancode.course;
+package org.cleancode.course.tasks;
 
-import org.cleancode.course.taskslist.TaskList;
+import org.cleancode.course.io.Keyboard;
+import org.cleancode.course.io.Screen;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -28,9 +29,9 @@ public final class ApplicationTest {
     private Thread applicationThread;
 
     public ApplicationTest() throws IOException {
-        BufferedReader in = new BufferedReader(new InputStreamReader(new PipedInputStream(inStream)));
-        PrintWriter out = new PrintWriter(new PipedOutputStream(outStream), true);
-        TaskList taskList = new TaskList(in, out);
+        Keyboard keyboard = new Keyboard(new InputStreamReader(inStream));
+        Screen screen = new Screen(inWriter);
+        TaskList taskList = new TaskList(keyboard, screen);
         applicationThread = new Thread(taskList);
     }
 
