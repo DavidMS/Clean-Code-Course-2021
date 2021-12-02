@@ -11,6 +11,10 @@ public class ProjectList {
         return lastId;
     }
 
+    public static Long nextId() {
+        return lastId++;
+    }
+
     public static void setLastId(Long lastId) {
         ProjectList.lastId = lastId;
     }

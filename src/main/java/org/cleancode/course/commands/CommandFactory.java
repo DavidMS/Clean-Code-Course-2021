@@ -14,13 +14,13 @@ public class CommandFactory {
 
     public Command make(String commandType, String parameters, ProjectList projectList, Screen screen) {
         switch (commandType) {
-            case CMD_ADD: return new AddCommand(parameters);
-            case CMD_CHECK: return new CheckCommand(parameters);
-            case CMD_HELP: return new HelpCommand();
+            case CMD_ADD: return new AddCommand(parameters, projectList);
+            case CMD_CHECK: return new CheckCommand(parameters, projectList);
+            case CMD_HELP: return new HelpCommand(screen);
             case CMD_QUIT: return new QuitCommand();
             case CMD_SHOW: return new ShowCommand(projectList, screen);
-            case CMD_UNCHECK: return new UncheckCommand(parameters);
-            default: return new ErrorCommand(commandType);
+            case CMD_UNCHECK: return new UncheckCommand(parameters, projectList);
+            default: return new ErrorCommand(commandType, screen);
         }
     }
 }
