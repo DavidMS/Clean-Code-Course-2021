@@ -19,14 +19,14 @@ public class UncheckCommand implements Command {
     @Override
     public void execute() throws CommandException {
         int id = Integer.parseInt(parameters);
-        for (Project project : projectList.getProjects()) {
-            for (Task task : project.getTasks().getTasks()) {
-                if (task.getId() == id) {
-                    task.setDone(false);
-                    return;
-                }
-            }
+        for(Project project: projectList.getProjects()) {
+            project.getTasks().getTasks()
+                    .stream()
+                    .filter(task -> task.getId() == id)
+                    .findFirst()
+                    .orElseThrow(() -> new CommandException("Could not find a task with an ID of " + id))
+                    .setDone(false);
+
         }
-        throw new CommandException("Could not find a task with an ID of " + id);
     }
 }
