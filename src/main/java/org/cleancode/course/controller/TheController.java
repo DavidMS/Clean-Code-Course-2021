@@ -1,5 +1,6 @@
 package org.cleancode.course.controller;
 
+import lombok.AllArgsConstructor;
 import org.cleancode.course.model.Post;
 import org.cleancode.course.service.TheService;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -9,9 +10,10 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 
 @RestController
+@AllArgsConstructor
 public class TheController {
 
-    private TheService theService = new TheService();
+    private TheService theService;
 
     @GetMapping("/getPosts")
     public List<Post> getPosts() {

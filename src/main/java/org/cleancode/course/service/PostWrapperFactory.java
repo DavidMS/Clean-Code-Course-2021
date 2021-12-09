@@ -8,8 +8,8 @@ public class PostWrapperFactory {
 
     public PostWrapper makePostWrapper(Post post) {
         switch (post.getStatus()) {
-            case FEATURED: return new FeaturedPostWrapper(post);
-            case PUBLISHED: return new PublishedPostWrapper(post);
+            case "FEATURED": return new FeaturedPostWrapper(post);
+            case "PUBLISHED": return new PublishedPostWrapper(post);
             default: return new DraftPostWrapper(post);
         }
     }

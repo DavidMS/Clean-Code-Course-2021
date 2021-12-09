@@ -2,20 +2,16 @@ package org.cleancode.course.model;
 
 import lombok.Data;
 
+import javax.persistence.Entity;
+import javax.persistence.Id;
 import java.util.List;
 
 @Data
+@Entity
 public class Rating {
-    private int id;
+    @Id
+    private Long id;
     private int rate;
     private String comment;
-    private int postId;
-    private List<Image> images;
-
-    public Rating(int id, int rate, String comment, int postId) {
-        this.id = id;
-        this.rate = rate;
-        this.comment = comment;
-        this.postId = postId;
-    }
+    private Long postId;
 }

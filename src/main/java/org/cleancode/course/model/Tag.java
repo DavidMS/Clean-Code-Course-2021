@@ -7,9 +7,9 @@ import javax.persistence.Id;
 
 @Data
 @Entity
-public class Image {
+public class Tag {
     @Id
     private Long id;
-    private String url;
+    private String name;
     private Long postId;
 }
