@@ -1,17 +1,18 @@
 package org.cleancode.course.service;
 
-import lombok.AllArgsConstructor;
+import java.util.List;
+import java.util.Locale;
+
 import org.cleancode.course.model.Post;
 import org.cleancode.course.model.Rating;
 import org.cleancode.course.repository.PostRepository;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-import java.util.Locale;
+import lombok.AllArgsConstructor;
 
 @Service
 @AllArgsConstructor
-public class TheService {
+public class PostService {
 
     // 1. Añadir metodo en controlador y servicio para obtener un post por id
     // 2. Completar el resto de métodos usando el repositorio
@@ -20,9 +21,8 @@ public class TheService {
     private GenerateCountMessage generateCountMessage;
     private PostRepository postRepository;
 
-    public List<Post> getPosts() {
-        return null;
-        //return posts;
+    public Iterable<Post> getPosts() {
+        return postRepository.findAll();
     }
 
     public List<Post> getFeaturedPosts() {
@@ -75,8 +75,7 @@ public class TheService {
         return postWrapperFactory.makePostWrapper(post).print();
     }
 
-    private Post getPostById(int postId) {
-        return null;
-        //return posts.stream().filter(p -> p.getId() == postId).findFirst().get();
+    public Post getPostById(int postId) {
+        return postRepository.findById(Long.valueOf(postId)).get();
     }
 }
